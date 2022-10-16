@@ -1,0 +1,7 @@
+﻿namespace Client.ProductResponses
+{
+    public class DeleteProductResponse
+    {
+        public StatusResponse StatusResponse { get; set; }
+    }
+}

@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1>WELCOME</h1>
+    <p>This is a client-server application for getting/editing data about the fridge and the products that are stored in it.</p>
+    <a class="btn-info btn text-white" href="/Fridge/Fridges">Fridges</a>
+    <button class="btn-dark btn text-white" onclick="callStoredProcedure()">Call stored procedure</button>
+</div>
+
+<script>
+
+function callStoredProcedure() {
+     const url = `/Product/CallStoredProcedure`;
+     fetch(url, {
+         method: 'post',
+         headers: {
+             "Content-type": "application/json; charset=UTF-8"
+         },
+     }).then((response) => {
+            alert("The stored procedure call was successful!");
+     });
+}
+
+</script>

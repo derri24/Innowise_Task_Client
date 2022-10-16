@@ -1,0 +1,42 @@
+﻿@using Syncfusion.EJ2.Grids
+@using Client.FridgeResponses
+@{
+    ViewData["Title"] = "Fridges Page";
+}
+@model FridgesModel 
+
+
+<div class="d-flex justify-content-between">
+   <div> <h1>FRIDGES</h1></div>
+    <div> <a class="btn-info btn text-white" href="/Fridge/CreatingFridge">Create new fridge</a></div>
+</div>
+<ejs-grid id="Grid" dataSource="Model.Fridges" allowPaging="true">
+<e-grid-pagesettings pageSize="13"></e-grid-pagesettings>
+    <e-grid-columns>
+        <e-grid-column field="Model" headerText="Model" textAlign="Center"></e-grid-column>
+        <e-grid-column field="Description" headerText="Description" textAlign="Center"></e-grid-column>
+        <e-grid-column headerText="" template='<a class="text-underline-hover text-info" href="/Product/Products?fridgeId=${FridgeId}">Products</a>' textAlign="Center"></e-grid-column>
+        <e-grid-column headerText="" template='<a class="text-underline-hover text-info" href="/Product/CreatingProducts?fridgeId=${FridgeId}">Add product(s)</a>' textAlign="Center"></e-grid-column>
+        <e-grid-column headerText="" template='<a class="text-underline-hover text-info" href="/Fridge/UpdatingFridge?fridgeId=${FridgeId}">Update</a>' textAlign="Center"></e-grid-column>
+        <e-grid-column headerText="" template='<a class="text-underline-hover text-danger" href="#" onclick="DeleteProductByIndex(`${FridgeId}`)">Delete</a>' textAlign="Center"></e-grid-column>
+    </e-grid-columns>
+</ejs-grid>
+
+
+<script>
+
+ function DeleteProductByIndex(fridgeId){
+  
+    console.log(fridgeId);
+     if (confirm("Do you want delete fridge?") === false)
+            return;
+        const url = `/Fridge/DeleteFridge?fridgeId=${fridgeId}`;
+        fetch(url)
+             .then((response) => {
+                   document.location.href = "/Fridge/Fridges";
+             });
+} 
+
+</script>
+
+

@@ -1,0 +1,60 @@
+﻿@{
+ViewData["Title"] = "Creating Fridge Page";
+}
+
+<div class="text-left w-50 mx-auto">
+    <h1 class="text-center">CREATING A NEW FRIDGE</h1>
+    <div>
+        <div>
+            <label for="fridge-model">Fridge model: </label>
+            <input id="fridge-model" class="rounded w-100 form-control mb-2"/>
+        </div>
+        <div>
+            <label for="description">Description: </label>
+            <textarea id="description" class="form-control w-100 mb-2 modal-dialog-scrollable" rows="3"></textarea>
+        </div>
+    </div>
+    <div class="mt-1 d-flex justify-content-between">
+            <a class="btn-info btn  text-white w-50" onclick="sendCreatedFridge()">OK</a>
+            <a class="btn-dark btn text-white w-47" href="/Fridge/Fridges">Cancel</a>
+        </div>
+</div>
+
+<script>
+   
+    function initPage() {
+        document.getElementById("fridge-model").value = null;
+        document.getElementById("description").value = null;
+    }
+
+    function checkFridgeProperties(model, description) {
+        if (model === "") {
+            alert("You didn't write fridge model.");
+            return 1;
+        }
+        if (description === "") {
+            alert("You didn't write fridge description.");
+            return 1;
+        }
+    }
+
+    function sendCreatedFridge() {
+        let createdFridge = {};
+        createdFridge.Model = document.getElementById("fridge-model").value;
+        createdFridge.Description = document.getElementById("description").value;
+        if (checkFridgeProperties(createdFridge.Model, createdFridge.Description) === 1)
+            return;
+        const url = `/Fridge/CreateFridge`;
+        fetch(url, {
+            method: 'post',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: JSON.stringify(createdFridge)
+        }).then((response) => {
+           document.location.href = "/Fridge/Fridges";
+        });
+        initPage();
+    }
+
+</script>

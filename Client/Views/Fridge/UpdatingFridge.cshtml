@@ -1,0 +1,67 @@
+﻿@{
+ViewData["Title"] = "Updating Fridge Page";
+}
+
+@model UpdateFridgeModel
+
+<div class="text-left w-50 mx-auto">
+    <h1 class="text-center">CHANGING THE FRIDGE</h1>
+    <div>
+        <div>
+            <label for="fridge-model">Fridge model: </label>
+            <input id="fridge-model" class="rounded w-100 form-control mb-2" value="@Model.Model"/>
+        </div>
+        <div>
+            <label for="description">Description: </label>
+            <textarea id="description" class="form-control w-100 mb-2 modal-dialog-scrollable" rows="3">@Model.Description</textarea>
+        </div>
+        <div>
+            <div class="mt-1 d-flex justify-content-between">
+                <a class="btn-info btn  text-white w-47" onclick="sendUpdatedFridge()">OK</a>
+                <a class="btn-dark btn text-white w-50" href="/Fridge/Fridges">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+function initPage() {
+    document.getElementById("fridge-model").value = null;
+    document.getElementById("description").value = null;
+}
+
+function checkFridgeProperties(model, description) {
+    if (model === "") {
+        alert("You didn't write fridge model.");
+        return 1;
+    }
+    if (description === "") {
+        alert("You didn't write fridge description.");
+        return 1;
+    }
+}
+
+function sendUpdatedFridge() {
+    let updatedFridgeModel = {};
+    updatedFridgeModel.FridgeId = @Model.FridgeId;
+    updatedFridgeModel.Model = document.getElementById("fridge-model").value;
+    updatedFridgeModel.Description = document.getElementById("description").value;
+    if (checkFridgeProperties(updatedFridgeModel.Model, updatedFridgeModel.Description) === 1)
+        return;
+
+    const url = `/Fridge/UpdateFridge`;
+    fetch(url, {
+        method: 'post',
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        },
+        body: JSON.stringify(updatedFridgeModel)
+    }).then((response) => {
+        document.location.href = "/Fridge/Fridges";
+    });
+
+    initPage();
+
+}
+</script>
