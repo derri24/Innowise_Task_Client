@@ -1,11 +1,8 @@
-﻿using System;
+﻿
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Client.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Client.Handlers;
 
 namespace Client.Controllers
@@ -19,12 +16,14 @@ namespace Client.Controllers
         private IGetProductsHandler _getProductsHandler;
         private IGetProductByIdHandler _getProductByIdHandler;
         private ICreateProductsHandler _createProductsHandler;
+        private ICallStoredProcedureHandler _callStoredProcedureHandler;
 
         public ProductController(IUpdateProductHandler updateProductHandler,
             IDeleteProductHandler deleteProductHandler,
             IGetProductsHandler getProductsHandler,
             IGetProductByIdHandler getProductByIdHandler,
-            ICreateProductsHandler createProductsHandler)
+            ICreateProductsHandler createProductsHandler,
+            ICallStoredProcedureHandler callStoredProcedureHandler)
         {
             HttpClientHandler clientHandler = new HttpClientHandler();
             clientHandler.ServerCertificateCustomValidationCallback =
@@ -36,7 +35,7 @@ namespace Client.Controllers
             _getProductsHandler = getProductsHandler;
             _getProductByIdHandler = getProductByIdHandler;
             _createProductsHandler = createProductsHandler;
-
+            _callStoredProcedureHandler = callStoredProcedureHandler;
         }
 
         [HttpPost]
@@ -75,12 +74,18 @@ namespace Client.Controllers
         {
             await _createProductsHandler.ExecuteAsync(_httpClient,createProductsModel);
             return Ok();
-            //return View();
         }
         
-        public async Task<IActionResult> CreatingProducts(int fridgeId)
+        public async Task<IActionResult> CreatingProducts()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CallStoredProcedure()
+        {
+            await _callStoredProcedureHandler.ExecuteAsync(_httpClient);
+            return Ok();
         }
     }
 }

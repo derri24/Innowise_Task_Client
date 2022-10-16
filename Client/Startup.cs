@@ -38,6 +38,8 @@ namespace Client
 
             services.AddScoped<IGetFridgeByIdHandler, GetFridgeByIdHandler>();
             services.AddScoped<IGetProductByIdHandler, GetProductByIdHandler>();
+
+            services.AddScoped<ICallStoredProcedureHandler, CallStoredProcedureHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
