@@ -1,0 +1,150 @@
+﻿@{
+ViewData["Title"] = "Creating Products Page";
+}
+
+<body>
+<div class="text-left w-75 mx-auto">
+    <div class="d-flex justify-content-between">
+        <div>
+            <label>List of products: </label>
+        </div>
+        <div class="d-flex justify-content-end d-block">
+            <button type="button" class="btn btn-success mr-1 p-1" onclick="createInputElement()">ADD</button>
+            <button type="button" class="btn btn-danger p-1" onclick="deleteInputElement()">DEL</button>
+        </div>
+    </div>
+    <div id="products" class="mt-2">
+    </div>
+    <div class="mt-1 d-flex justify-content-between">
+        <a class="btn-info btn  text-white w-50" onclick="sendCreatedProducts()">OK</a>
+        <a class="btn-dark btn text-white w-47" href="/Fridge/Fridges">Cancel</a>
+    </div>
+</div>
+</body>
+
+<script>
+let index = 0;
+let indexId = 0;
+let products;
+
+function createInputElement() {
+    let inputName = document.createElement('input');
+    inputName.className = "mr-2 mb-2 form-control d-inline-block w-25";
+    inputName.id = "inputName-" + indexId;
+    inputName.placeholder = "Product name";
+
+    let inputCalorieContent = document.createElement('input');
+    inputCalorieContent.className = "mr-2 mb-2 form-control d-inline-block w-25";
+    inputCalorieContent.id = "inputCalorieContent-" + indexId;
+    inputCalorieContent.placeholder = "Calorie (100 gr)";
+    inputCalorieContent.type = "number";
+    inputCalorieContent.min = "1";
+
+    inputCalorieContent.oninput = function () {
+        this.value = this.value.replace(/^[0][0-9]*$/, '');
+    }
+
+    let inputExpiryDate = document.createElement('input');
+    inputExpiryDate.className = " mb-2 form-control d-inline-block w-25";
+    inputExpiryDate.id = "inputExpiryDate-" + indexId;
+    inputExpiryDate.type = "date";
+
+    let inputQuantity = document.createElement('input');
+    inputQuantity.className = "mr-2 mb-2 form-control d-inline-block w-22";
+    inputQuantity.id = "inputQuantity-" + indexId;
+    inputQuantity.placeholder = "Quantity";
+    inputQuantity.type = "number";
+    inputQuantity.min = "0";
+    inputQuantity.oninput = function () {
+        this.value = this.value.replace(/^-$/, '');
+    }
+
+    let brElement = document.createElement('br');
+
+    products = document.getElementById("products");
+    products.appendChild(inputName);
+    products.appendChild(inputCalorieContent);
+    products.appendChild(inputQuantity);
+    products.appendChild(inputExpiryDate);
+    products.appendChild(brElement);
+    index += 5;
+    indexId++;
+
+}
+
+function deleteInputElement() {
+    if (products.childElementCount > 0) {
+        let brElement = products.children[index - 1];
+        let inputCalorieContent = products.children[index - 2];
+        let inputExpiryDate = products.children[index - 3];
+        let inputQuantity = products.children[index - 4];
+        let inputName = products.children[index - 5];
+        products.removeChild(brElement);
+        products.removeChild(inputCalorieContent);
+        products.removeChild(inputExpiryDate);
+        products.removeChild(inputName);
+        products.removeChild(inputQuantity);
+        index -= 5;
+        indexId--;
+
+    }
+}
+
+function initPage() {
+    while (indexId > 0)
+        deleteInputElement();
+}
+
+function checkProductProperties(name, caloriesCount, expiryDate, quantity) {
+    if (name === "") {
+        alert("You didn't write product name.");
+        return 1;
+    }
+    if (caloriesCount === "") {
+        alert("You didn't write calories count.");
+        return 1;
+    }
+    if (quantity === "") {
+        alert("You didn't write quantity.");
+        return 1;
+    }
+    if (expiryDate === "") {
+        alert("You didn't write date.");
+        return 1;
+    }
+}
+
+function sendCreatedProducts() {
+    let createProducts = {};
+    let addr = new URL(document.URL);
+    let fridgeId = addr.searchParams.get("fridgeId");
+
+    createProducts.FridgeId = fridgeId;
+    const products = [];
+    for (let i = 0; i < indexId; i++) {
+        let product = {};
+        product.Name = document.getElementById("inputName-" + i).value;
+        product.CaloriesCount = document.getElementById("inputCalorieContent-" + i).value;
+        product.Quantity = document.getElementById("inputQuantity-" + i).value;
+        product.ExpiryDate = document.getElementById("inputExpiryDate-" + i).value;
+        if (checkProductProperties(product.Name, product.CaloriesCount, product.ExpiryDate, product.Quantity) === 1)
+            return;
+        products.push(product);
+    }
+    createProducts.Products = products;
+    console.log(createProducts);
+    const url = `/Product/CreateProducts`;
+    fetch(url, {
+        method: 'post',
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        },
+        body: JSON.stringify(createProducts)
+    }).then((response) => {
+        document.location.href = "/Fridge/Fridges";
+    });
+
+    initPage();
+}  
+
+</script>
